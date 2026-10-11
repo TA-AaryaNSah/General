@@ -3,44 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Remove image backgrounds instantly with AI technology. Clean, fast & easy to use.">
-    <title>AI Background Remover</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Deployment Guide | Telegram Bot</title>
+    <style>
+        /* CSS Variables for SaaS Aesthetic */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent: #10b981;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+            gap: 40px;
+        }
+
+        /* Sidebar & ToC */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .toc-container {
+            position: sticky;
+            top: 40px;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .toc-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toc-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid transparent;
+        }
+
+        .toc-link:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .toc-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .toc-link svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            max-width: 800px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            scroll-margin-top: 40px;
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        section h2 svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+        }
+
+        section p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 16px;
+            color: #d1fae5;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+            .toc-container {
+                position: static;
+            }
+        }
+    </style>
 </head>
 <body>
-    <center> 
-        <h1>Instant AI Background Removal</h1>
-        <p>Upload your image, and let AI remove the background for you in seconds!</p>
-        <br>
-        <section class="upload-container">
-            <div class="upload-box" id="uploadBox">
-                <button class="upload-btn" onclick="triggerUpload()">Upload Image</button>
-                <input type="file" id="imageInput" accept="image/*" hidden>
-            </div>
-        </section>
-    </center>
 
-    <div id="loading">
-        <div class="loader"></div>
-        <p>Processing...</p>
+    <div class="layout">
+        <!-- Sidebar with Advanced ToC -->
+        <aside class="sidebar">
+            <div class="toc-container">
+                <div class="toc-title">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+                    Table of Contents
+                </div>
+                <ul class="toc-nav">
+                    <li><a href="#step-1" class="toc-link"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> 1. Preparation & GitHub</a></li>
+                    <li><a href="#step-2" class="toc-link"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg> 2. Environment Variables</a></li>
+                    <li><a href="#step-3" class="toc-link"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg> 3. Deploy to Koyeb</a></li>
+                    <li><a href="#step-4" class="toc-link"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v-2H4v6h16v-6h-2v2h-2v-5z"/></svg> 4. Deploy to Render</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Guide Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Telegram Bot Deployment</h1>
+                <p>The ultimate guide to deploying your custom-designed bot securely and for free.</p>
+            </div>
+
+            <!-- Step 1 -->
+            <section id="step-1">
+                <h2>
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                    1. Preparation & GitHub Upload
+                </h2>
+                <p>First, extract your bot source code. <strong>Note:</strong> While this foundational architecture can be found on the internet, this specific build incorporates a highly optimized, custom design uniquely structured for cloud deployment.</p>
+                <ol style="margin-left: 20px; color: var(--text-muted); line-height: 1.8;">
+                    <li><strong>Unzip the Code:</strong> Extract the provided ZIP file on your local machine.</li>
+                    <li><strong>Create a Repository:</strong> Go to your GitHub account and create a new repository. You can make it Public or Private (Private is recommended for security).</li>
+                    <li><strong>Upload Files:</strong> Drag and drop the unzipped files into your new GitHub repository and commit the changes.</li>
+                </ol>
+            </section>
+
+            <!-- Step 2 -->
+            <section id="step-2">
+                <h2>
+                    <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4h2.35l2-2h2l2-2h-2l-2-2h-3.35zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                    2. Environment Variables (Config)
+                </h2>
+                <div class="highlight-box">
+                    <strong>Crucial Security Step:</strong> Never hardcode API keys directly into your files if your GitHub repository is public!
+                </div>
+                <p>To run your bot, you need specific configuration variables (like <code>BOT_TOKEN</code>, <code>API_ID</code>, etc.). How you handle these depends on your repository type:</p>
+                <ul style="margin-left: 20px; color: var(--text-muted); line-height: 1.8;">
+                    <li><strong>If Repo is Private:</strong> You can define the variables inside a <code>config.py</code> file or directly in GitHub Actions if utilizing CI/CD.</li>
+                    <li><strong>If Repo is Public:</strong> Do not upload any config files containing tokens! Instead, input all variables directly into the <strong>Environment Variables section</strong> of your chosen deployment server (Koyeb or Render) during the setup process.</li>
+                </ul>
+            </section>
+
+            <!-- Step 3 -->
+            <section id="step-3">
+                <h2>
+                    <svg viewBox="0 0 24 24"><path d="M21 16V8c0-1.1-.9-2-2-2h-5l-2-2H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-2 0H5V6h6l2 2h6v8z"/></svg>
+                    3. Deploy to Koyeb (Optimized)
+                </h2>
+                <p>Our code is heavily optimized for Koyeb's high-performance free tier. Follow these steps to get your bot running 24/7.</p>
+                <ol style="margin-left: 20px; color: var(--text-muted); line-height: 1.8;">
+                    <li>Log in to <a href="https://app.koyeb.com" style="color: var(--primary);">Koyeb</a> and click <strong>Create Service</strong>.</li>
+                    <li>Select <strong>GitHub</strong> as your deployment method and choose the repository you just created.</li>
+                    <li>In the configuration menu, locate the <strong>Environment Variables</strong> section and paste your keys (e.g., <code>BOT_TOKEN</code>).</li>
+                    <li>Select your instance size (Free Tier is sufficient) and click <strong>Deploy</strong>.</li>
+                    <li>Watch the build logs; your bot will be live in 1-2 minutes!</li>
+                </ol>
+            </section>
+
+            <!-- Step 4 -->
+            <section id="step-4">
+                <h2>
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+                    4. Deploy to Render (Alternative)
+                </h2>
+                <p>Render is another excellent free platform our code fully supports. Use this if you prefer their ecosystem.</p>
+                <ol style="margin-left: 20px; color: var(--text-muted); line-height: 1.8;">
+                    <li>Go to <a href="https://dashboard.render.com" style="color: var(--primary);">Render</a> and create a new <strong>Web Service</strong> or <strong>Background Worker</strong> (Background Worker is best for polling bots).</li>
+                    <li>Connect your GitHub account and select your bot's repository.</li>
+                    <li>Set the build command (e.g., <code>pip install -r requirements.txt</code>) and the start command (e.g., <code>python3 main.py</code>).</li>
+                    <li>Go to the <strong>Advanced</strong> tab and click <strong>Add Environment Variable</strong> to securely input your tokens.</li>
+                    <li>Click <strong>Create Service</strong>. Render will build and deploy your application automatically.</li>
+                </ol>
+            </section>
+        </main>
     </div>
 
-    <section id="preview-section">
-        <div class="image-box">
-            <h2>Original Image</h2>
-            <img id="original-image" src="" alt="Original">
-        </div>
-        <div class="image-box">
-            <h2>Background Removed</h2>
-            <img id="preview" src="" alt="Processed">
-        </div>
-        <a id="download-btn" download>Download Image</a>
-    </section>
+    <!-- ScrollSpy JavaScript for Interactive Table of Contents -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.toc-link');
 
-    <footer>
-        <p>© 2025 Background Remover</p>
-    </footer>
+            // Intersection Observer configuration
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -80% 0px', // Triggers when section is near the top
+                threshold: 0
+            };
 
-    <script src="script.js"></script>
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Remove active class from all links
+                        navLinks.forEach(link => link.classList.remove('active'));
+                        
+                        // Add active class to corresponding link
+                        const id = entry.target.getAttribute('id');
+                        const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+            // Observe all sections
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
 </body>
 </html>
